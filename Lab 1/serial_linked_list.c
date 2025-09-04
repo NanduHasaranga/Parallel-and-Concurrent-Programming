@@ -79,8 +79,8 @@ void RunOperations(int m, double mMember, double mInsert, double mDelete) {
 }
 
 int main(int argc, char* argv[]) {
-    int n = 1000, m = 10000, runs = 1000;
-    double mMember = 0.99, mInsert = 0.005, mDelete = 0.005;
+    int n = 1000, m = 10000, runs = 1;
+    double mMember = 0.50, mInsert = 0.25, mDelete = 0.25;
     if (argc > 1) runs = atoi(argv[1]);
     srand(time(NULL));
 

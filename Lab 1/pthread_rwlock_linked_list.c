@@ -93,7 +93,7 @@ void* ThreadWork(void* args) {
 
 int main(int argc, char* argv[]) {
     int n = 1000, m = 10000, thread_count = 4, runs = 1000;
-    double mMember = 0.99, mInsert = 0.005, mDelete = 0.005;
+    double mMember = 0.50, mInsert = 0.25, mDelete = 0.25;
     if (argc > 1) thread_count = atoi(argv[1]);
     if (argc > 2) runs = atoi(argv[2]);
     srand(time(NULL));

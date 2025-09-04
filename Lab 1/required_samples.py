@@ -8,8 +8,8 @@ def required_samples(mean, std, accuracy=0.05, confidence=0.95):
 
 if __name__ == "__main__":
     # Example usage: replace with your mean and std
-    mean = 0.007500  # average execution time (seconds)
-    std = 0.000500   # standard deviation (seconds)
+    mean = 0.002020  # average execution time (seconds)
+    std = 0.000616  # standard deviation (seconds)
     samples = required_samples(mean, std)
     print(f"Required samples for ±5% accuracy and 95% confidence: {samples}")
     # Or prompt user for input:

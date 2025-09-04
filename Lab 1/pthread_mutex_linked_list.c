@@ -93,14 +93,11 @@ void* ThreadWork(void* args) {
 
 int main(int argc, char* argv[]) {
     int n = 1000, m = 10000, thread_count = 4, runs = 1000;
-    double mMember = 0.99, mInsert = 0.005, mDelete = 0.005;
+    double mMember = 0.50, mInsert = 0.25, mDelete = 0.25;
     if (argc > 1) thread_count = atoi(argv[1]);
     if (argc > 2) runs = atoi(argv[2]);
     srand(time(NULL));
 
-    // For mutex/rwlock, initialize lock here
-    // pthread_mutex_init(&mutex, NULL);
-    // pthread_rwlock_init(&rwlock, NULL);
 
     double* times = malloc(runs * sizeof(double));
     for (int r = 0; r < runs; r++) {
@@ -132,10 +129,6 @@ int main(int argc, char* argv[]) {
 
         times[r] = (double)(end - start) / CLOCKS_PER_SEC;
 
-        // For mutex/rwlock, destroy lock if needed
-        // pthread_mutex_destroy(&mutex);
-        // pthread_rwlock_destroy(&rwlock);
-
         free(threads);
         free(targs);
     }
@@ -153,6 +146,5 @@ int main(int argc, char* argv[]) {
     printf("Std deviation: %f seconds\n", std);
 
     free(times);
-    // Free other resources
     return 0;
 }
