@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include <time.h>
+#include <math.h>
 
 typedef struct node {
     int data;
@@ -91,37 +92,56 @@ void* ThreadWork(void* args) {
 }
 
 int main(int argc, char* argv[]) {
-    int n = 1000, m = 10000, thread_count = 4;
+    int n = 1000, m = 10000, thread_count = 4, runs = 1000;
     double mMember = 0.99, mInsert = 0.005, mDelete = 0.005;
     if (argc > 1) thread_count = atoi(argv[1]);
+    if (argc > 2) runs = atoi(argv[2]);
     srand(time(NULL));
-    pthread_rwlock_init(&rwlock, NULL);
-    PopulateList(n);
 
-    pthread_t* threads = malloc(thread_count * sizeof(pthread_t));
-    thread_args* targs = malloc(thread_count * sizeof(thread_args));
-    int memberOps = m * mMember, insertOps = m * mInsert, deleteOps = m * mDelete;
-    int ops_per_thread = m / thread_count;
+    double* times = malloc(runs * sizeof(double));
+    for (int r = 0; r < runs; r++) {
+        // Reset list
+        head = NULL;
 
-    for (int i = 0; i < thread_count; i++) {
-        targs[i].mMember = memberOps / thread_count;
-        targs[i].mInsert = insertOps / thread_count;
-        targs[i].mDelete = deleteOps / thread_count;
-        targs[i].totalOps = ops_per_thread;
+        PopulateList(n);
+
+        pthread_t* threads = malloc(thread_count * sizeof(pthread_t));
+        thread_args* targs = malloc(thread_count * sizeof(thread_args));
+        int memberOps = m * mMember, insertOps = m * mInsert, deleteOps = m * mDelete;
+        int ops_per_thread = m / thread_count;
+
+        for (int i = 0; i < thread_count; i++) {
+            targs[i].mMember = memberOps / thread_count;
+            targs[i].mInsert = insertOps / thread_count;
+            targs[i].mDelete = deleteOps / thread_count;
+            targs[i].totalOps = ops_per_thread;
+        }
+
+        clock_t start = clock();
+        for (int i = 0; i < thread_count; i++)
+            pthread_create(&threads[i], NULL, ThreadWork, &targs[i]);
+        for (int i = 0; i < thread_count; i++)
+            pthread_join(threads[i], NULL);
+        clock_t end = clock();
+
+        times[r] = (double)(end - start) / CLOCKS_PER_SEC;
+
+        free(threads);
+        free(targs);
     }
 
-    clock_t start = clock();
-    for (int i = 0; i < thread_count; i++)
-        pthread_create(&threads[i], NULL, ThreadWork, &targs[i]);
-    for (int i = 0; i < thread_count; i++)
-        pthread_join(threads[i], NULL);
-    clock_t end = clock();
+    // Calculate average and std
+    double sum = 0, sum_sq = 0;
+    for (int r = 0; r < runs; r++) {
+        sum += times[r];
+        sum_sq += times[r] * times[r];
+    }
+    double avg = sum / runs;
+    double std = sqrt(sum_sq / runs - avg * avg);
 
-    double elapsed = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Elapsed time: %f seconds\n", elapsed);
+    printf("Average time: %f seconds\n", avg);
+    printf("Std deviation: %f seconds\n", std);
 
-    pthread_rwlock_destroy(&rwlock);
-    free(threads);
-    free(targs);
+    free(times);
     return 0;
 }

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 typedef struct node {
     int data;
@@ -78,16 +79,32 @@ void RunOperations(int m, double mMember, double mInsert, double mDelete) {
 }
 
 int main(int argc, char* argv[]) {
-    int n = 1000, m = 10000;
+    int n = 1000, m = 10000, runs = 1000;
     double mMember = 0.99, mInsert = 0.005, mDelete = 0.005;
+    if (argc > 1) runs = atoi(argv[1]);
     srand(time(NULL));
-    PopulateList(n);
 
-    clock_t start = clock();
-    RunOperations(m, mMember, mInsert, mDelete);
-    clock_t end = clock();
+    double* times = malloc(runs * sizeof(double));
+    for (int r = 0; r < runs; r++) {
+        head = NULL;
+        PopulateList(n);
+        clock_t start = clock();
+        RunOperations(m, mMember, mInsert, mDelete);
+        clock_t end = clock();
+        times[r] = (double)(end - start) / CLOCKS_PER_SEC;
+    }
 
-    double elapsed = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Elapsed time: %f seconds\n", elapsed);
+    double sum = 0, sum_sq = 0;
+    for (int r = 0; r < runs; r++) {
+        sum += times[r];
+        sum_sq += times[r] * times[r];
+    }
+    double avg = sum / runs;
+    double std = sqrt(sum_sq / runs - avg * avg);
+
+    printf("Average time: %f seconds\n", avg);
+    printf("Std deviation: %f seconds\n", std);
+
+    free(times);
     return 0;
 }
