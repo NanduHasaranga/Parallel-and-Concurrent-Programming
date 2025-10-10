@@ -155,9 +155,9 @@ class Rider implements Runnable {
  * Main simulation class
  */
 public class SenatesBus {
-    private static final double BUS_MEAN_ARRIVAL_TIME = 20 * 1000;          // 20 seconds (faster for testing)
-    private static final double RIDER_MEAN_ARRIVAL_TIME = 500;             // 0.5 seconds (faster for testing)
-    private static final int SIMULATION_DURATION = 2 * 60 * 1000;          // 2 minutes (shorter simulation)
+    private static final double BUS_MEAN_ARRIVAL_TIME = 20 * 60 * 1000;    // 20 minutes in milliseconds
+    private static final double RIDER_MEAN_ARRIVAL_TIME = 30 * 1000;       // 30 seconds in milliseconds
+    private static final int SIMULATION_DURATION = 2 * 60 * 60 * 1000;     // 2 hours in milliseconds
     
     /**
      * Generate exponentially distributed random variable
@@ -172,9 +172,9 @@ public class SenatesBus {
     public static void main(String[] args) {
         System.out.println("=== Senate Bus Problem Simulation ===");
         System.out.println("Bus capacity: 50 riders");
-        System.out.println("Mean bus arrival time: 20 seconds (faster for testing)");
-        System.out.println("Mean rider arrival time: 0.5 seconds (faster for testing)");
-        System.out.println("Simulation duration: 2 minutes\n");
+        System.out.println("Mean bus arrival time: 20 minutes");
+        System.out.println("Mean rider arrival time: 30 seconds");
+        System.out.println("Simulation duration: 2 hours\n");
         
         BusStop busStop = new BusStop();
         long startTime = System.currentTimeMillis();
